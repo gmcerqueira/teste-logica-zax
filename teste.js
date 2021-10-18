@@ -46,7 +46,7 @@ const selecionaLoja = (moto) => {
     moto === motos.moto4
       ? lojas[0]
       : lojas.find(({ pedidos }) => pedidos.length > 0);
-
+  if (!lojaLocalizada) return { error: "Não exitem mais pedidos disponíveis" };
   return lojaLocalizada;
 };
 
@@ -69,14 +69,24 @@ const modificaPedidos = (loja, moto) => {
   lojas[index].pedidos = [];
 };
 
+const verificaDisponibilidade = (loja, moto) => {
+  const { pedidos } = loja;
+
+  if (pedidos.length === 0)
+    return { error: `${moto.nome} só realiza entregas para ${lojas[0].nome}` };
+  return true;
+};
+
 const relatorioEntrega = (moto = motos.moto4) => {
   const loja = selecionaLoja(moto);
 
-  if (!loja) return console.log("Não exitem mais pedidos disponíveis");
+  if (loja.error) return console.log(loja.error);
 
-  const { pedidos, nome, taxa } = loja;
+  const disponibilidade = verificaDisponibilidade(loja, moto);
 
-  if (pedidos.length === 0) return;
+  if (disponibilidade.error) return console.log(disponibilidade.error);
+
+  const { nome, taxa } = loja;
 
   modificaPedidos(loja, moto);
 
@@ -86,10 +96,12 @@ const relatorioEntrega = (moto = motos.moto4) => {
   Entregador: ${moto.nome}
   Pedidos: ${moto.pedidos.length}
   Loja: ${nome}
-  Pagamento entregador: R$ ${pagamentoEntregador}`);
+  Pagamento entregador: R$ ${pagamentoEntregador}
+  `);
 };
 
-relatorioEntrega();
 relatorioEntrega(motos.moto1);
 relatorioEntrega(motos.moto2);
 relatorioEntrega(motos.moto3);
+relatorioEntrega(motos.moto5);
+relatorioEntrega();
