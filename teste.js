@@ -1,7 +1,7 @@
 const lojas = [
   {
     nome: "Loja 1",
-    pedidos: [10, 20, 30],
+    pedidos: [50, 50, 50],
     taxa: 0.05,
   },
 
@@ -47,6 +47,11 @@ const relatorioEntrega = (moto = motos.moto4) => {
       ? lojas[0]
       : lojas.find(({ pedidos }) => pedidos.length > 0);
 
+  if (!loja) {
+    console.log("Não exitem mais pedidos disponíveis");
+    return;
+  }
+
   const { pedidos, nome, taxa } = loja;
 
   if (pedidos.length === 0) return;
@@ -69,7 +74,7 @@ const relatorioEntrega = (moto = motos.moto4) => {
   Pagamento entregador: R$ ${total}`);
 };
 
-relatorioEntrega(motos.moto5);
+relatorioEntrega();
 relatorioEntrega(motos.moto2);
-// relatorioEntrega(motos.moto3);
-// relatorioEntrega(motos.moto4);
+relatorioEntrega(motos.moto3);
+relatorioEntrega(motos.moto4);
