@@ -41,14 +41,23 @@ const motos = {
   },
 };
 const calculoEntrega = (moto = motos.moto4) => {
-  const loja = lojas.find(({ pedidos }) => pedidos.length > 0);
+  let loja = (moto = motos.moto4
+    ? lojas[0]
+    : lojas.find(({ pedidos }) => pedidos.length > 0));
+
   const { pedidos } = loja;
 
+  if (pedidos.length === 0) return;
+  
   pedidos.forEach((pedido) => {
     moto.pedidos.push(pedido);
   });
 
-  console.log(moto.pedidos);
+  const valorPedidos = moto.pedidos.reduce((prev, curr) => prev + curr, 0);
+  const valorComTaxaLoja = valorPedidos + loja.taxa * valorPedidos;
+
+  const total = valorComTaxaLoja + moto.taxa;
+  console.log(valorComTaxaLoja);
 };
 
 calculoEntrega(motos.moto4);
