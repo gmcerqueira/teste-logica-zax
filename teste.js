@@ -1,13 +1,13 @@
 const lojas = [
   {
-    name: "Loja 1",
-    pedidos: [50, 50, 50],
+    nome: "Loja 1",
+    pedidos: [10, 20, 30],
     taxa: 0.05,
   },
 
-  { name: "Loja 2", pedidos: [50, 50, 50, 50], taxa: 0.05 },
+  { nome: "Loja 2", pedidos: [50, 50, 50, 50], taxa: 0.05 },
 
-  { name: "Loja 3", pedidos: [50, 50, 100], taxa: 0.15 },
+  { nome: "Loja 3", pedidos: [50, 50, 100], taxa: 0.15 },
 ];
 const motos = {
   moto1: {
@@ -40,24 +40,36 @@ const motos = {
     pedidos: [],
   },
 };
-const calculoEntrega = (moto = motos.moto4) => {
-  let loja = (moto = motos.moto4
-    ? lojas[0]
-    : lojas.find(({ pedidos }) => pedidos.length > 0));
 
-  const { pedidos } = loja;
+const relatorioEntrega = (moto = motos.moto4) => {
+  let loja =
+    moto === motos.moto4
+      ? lojas[0]
+      : lojas.find(({ pedidos }) => pedidos.length > 0);
+
+  const { pedidos, nome, taxa } = loja;
 
   if (pedidos.length === 0) return;
-  
-  pedidos.forEach((pedido) => {
+
+  const index = lojas.indexOf(loja);
+  pedidos.forEach((pedido, i) => {
     moto.pedidos.push(pedido);
   });
 
-  const valorPedidos = moto.pedidos.reduce((prev, curr) => prev + curr, 0);
-  const valorComTaxaLoja = valorPedidos + loja.taxa * valorPedidos;
+  lojas[index].pedidos = [];
 
-  const total = valorComTaxaLoja + moto.taxa;
-  console.log(valorComTaxaLoja);
+  const valorPedidos = moto.pedidos.reduce((prev, curr) => prev + curr, 0);
+  const valorTaxaLoja = taxa * valorPedidos;
+
+  const total = valorTaxaLoja + moto.taxa;
+  console.log(`
+  Entregador: ${moto.nome}
+  Pedidos: ${moto.pedidos.length}
+  Loja: ${nome}
+  Pagamento entregador: R$ ${total}`);
 };
 
-calculoEntrega(motos.moto4);
+relatorioEntrega(motos.moto5);
+relatorioEntrega(motos.moto2);
+// relatorioEntrega(motos.moto3);
+// relatorioEntrega(motos.moto4);
