@@ -41,40 +41,55 @@ const motos = {
   },
 };
 
-const relatorioEntrega = (moto = motos.moto4) => {
-  let loja =
+const selecionaLoja = (moto) => {
+  const lojaLocalizada =
     moto === motos.moto4
       ? lojas[0]
       : lojas.find(({ pedidos }) => pedidos.length > 0);
 
-  if (!loja) {
-    console.log("Não exitem mais pedidos disponíveis");
-    return;
-  }
+  return lojaLocalizada;
+};
+
+const calculaTaxaEntregador = (moto, taxa) => {
+  const valorPedidos = moto.pedidos.reduce((prev, curr) => prev + curr, 0);
+  const valorTaxaLoja = taxa * valorPedidos;
+  const total = valorTaxaLoja + moto.taxa;
+
+  return total;
+};
+
+const modificaPedidos = (loja, moto) => {
+  const { pedidos } = loja;
+
+  pedidos.forEach((pedido) => {
+    moto.pedidos.push(pedido);
+  });
+
+  const index = lojas.indexOf(loja);
+  lojas[index].pedidos = [];
+};
+
+const relatorioEntrega = (moto = motos.moto4) => {
+  const loja = selecionaLoja(moto);
+
+  if (!loja) return console.log("Não exitem mais pedidos disponíveis");
 
   const { pedidos, nome, taxa } = loja;
 
   if (pedidos.length === 0) return;
 
-  const index = lojas.indexOf(loja);
-  pedidos.forEach((pedido, i) => {
-    moto.pedidos.push(pedido);
-  });
+  modificaPedidos(loja, moto);
 
-  lojas[index].pedidos = [];
+  const pagamentoEntregador = calculaTaxaEntregador(moto, taxa);
 
-  const valorPedidos = moto.pedidos.reduce((prev, curr) => prev + curr, 0);
-  const valorTaxaLoja = taxa * valorPedidos;
-
-  const total = valorTaxaLoja + moto.taxa;
   console.log(`
   Entregador: ${moto.nome}
   Pedidos: ${moto.pedidos.length}
   Loja: ${nome}
-  Pagamento entregador: R$ ${total}`);
+  Pagamento entregador: R$ ${pagamentoEntregador}`);
 };
 
 relatorioEntrega();
+relatorioEntrega(motos.moto1);
 relatorioEntrega(motos.moto2);
 relatorioEntrega(motos.moto3);
-relatorioEntrega(motos.moto4);
